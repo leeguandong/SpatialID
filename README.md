@@ -1,5 +1,5 @@
 <h3 align="center">
-    Inject Where It Matters: Training-Free Spatially-Adaptive\\Identity Preservation for Text-to-Image Personalization
+    Inject Where It Matters: Training-Free Spatially-Adaptive Identity Preservation for Text-to-Image Personalization
 </h3>
 
 <p align="center">
