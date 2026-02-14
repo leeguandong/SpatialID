@@ -1,8 +1,6 @@
 <div align="center">
 
-# Inject Where It Matters
-
-**Training-Free Spatially-Adaptive Identity Preservation for Text-to-Image Personalization**
+# Inject Where It Matters: Training-Free Spatially-Adaptive\\Identity Preservation for Text-to-Image Personalization
 
 [Guandong Li](https://github.com/leeguandong)<sup>1</sup> · Mengxia Ye<sup>2</sup>
 
@@ -29,12 +27,6 @@ SpatialID:        h ← h + α · M_t ⊙ CA(Z_id, h)    # face-focused, scene-f
 ```
 
 Zero training. Zero extra parameters. ~2-3% overhead.
-
-## Qualitative Results
-
-<p align="center">
-  <img src="assets/figure2.png" width="95%">
-</p>
 
 ## Method
 
