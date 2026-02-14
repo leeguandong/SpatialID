@@ -14,7 +14,7 @@
 </div>
 
 <p align="center">
-  <img src="paper/figure1.png" width="95%">
+  <img src="assets/figure1.png" width="95%">
 </p>
 
 ## Overview
@@ -33,7 +33,7 @@ Zero training. Zero extra parameters. ~2-3% overhead.
 ## Qualitative Results
 
 <p align="center">
-  <img src="paper/figure2.png" width="95%">
+  <img src="assets/figure2.png" width="95%">
 </p>
 
 ## Method
