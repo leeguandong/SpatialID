@@ -1,15 +1,11 @@
-<div align="center">
+<h3 align="center">
+    Inject Where It Matters: Training-Free Spatially-Adaptive\\Identity Preservation for Text-to-Image Personalization
+</h3>
 
-# Inject Where It Matters: Training-Free Spatially-Adaptive\\Identity Preservation for Text-to-Image Personalization
-
-[Guandong Li](https://github.com/leeguandong)<sup>1</sup> · Mengxia Ye<sup>2</sup>
-
-<sup>1</sup>iFLYTEK &nbsp;&nbsp; <sup>2</sup>Aegon THTF
-
-[![arXiv](https://img.shields.io/badge/arXiv-Paper-red.svg)]()
-[![GitHub](https://img.shields.io/github/stars/leeguandong/SpatialID?style=social)](https://github.com/leeguandong/SpatialID)
-
-</div>
+<p align="center">
+<a href="https://arxiv.org/abs/2602.07554"><img alt="Build" src="https://img.shields.io/badge/Tech%20Report-SpatialID-b31b1b.svg"></a>
+<a href="https://github.com/leeguandong/SpatialID"><img src="https://img.shields.io/static/v1?label=GitHub&message=repository&color=green"></a>
+</p>
 
 <p align="center">
   <img src="assets/figure1.png" width="95%">
