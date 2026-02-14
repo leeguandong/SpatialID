@@ -1,53 +1,74 @@
+<div align="center">
+
 # Inject Where It Matters
 
-### Training-Free Spatially-Adaptive Identity Preservation for Text-to-Image Personalization
+**Training-Free Spatially-Adaptive Identity Preservation for Text-to-Image Personalization**
+
+[Guandong Li](https://github.com/leeguandong)<sup>1</sup> · Mengxia Ye<sup>2</sup>
+
+<sup>1</sup>iFLYTEK &nbsp;&nbsp; <sup>2</sup>Aegon THTF
+
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-red.svg)]()
+[![GitHub](https://img.shields.io/github/stars/leeguandong/SpatialID?style=social)](https://github.com/leeguandong/SpatialID)
+
+</div>
 
 <p align="center">
-  <img src="paper/figure1.png" width="100%">
+  <img src="paper/figure1.png" width="95%">
 </p>
 
-> **Guandong Li** (iFLYTEK) · **Mengxia Ye** (Aegon THTF)
-
-## TL;DR
+## Overview
 
 Existing tuning-free ID injection methods (PuLID, InstantID, etc.) broadcast identity features **uniformly** across all image patches — including backgrounds, clothing, and scenes. This causes background contamination, style disconnection, and unnatural lighting.
 
-**SpatialID** fixes this by upgrading the scalar injection weight to a **spatially-adaptive mask**:
+**SpatialID** upgrades the scalar injection weight to a **spatially-adaptive mask**, restricting ID injection to face-relevant regions only:
 
 ```
-# PuLID (uniform):  h ← h + α · CA(Z_id, h)
-# SpatialID:        h ← h + α · M_t ⊙ CA(Z_id, h)
+PuLID (uniform):  h ← h + α · CA(Z_id, h)          # same weight everywhere
+SpatialID:        h ← h + α · M_t ⊙ CA(Z_id, h)    # face-focused, scene-free
 ```
 
-where `M_t ∈ [0,1]^{H×W}` is a time-varying spatial mask that restricts ID injection to face-relevant regions only. **Zero training, zero extra parameters, ~2-3% overhead.**
+Zero training. Zero extra parameters. ~2-3% overhead.
 
-## Key Results (IBench: 100 IDs × 41 Prompts)
-
-| Method | IQ↑ | CLIP-I↑ | CLIP-T↑ | FaceSim↑ |
-|--------|-----|---------|---------|----------|
-| PuLID (Krea) | 0.505 | 0.793 | 0.277 | 0.495 |
-| Dreamo | 0.510 | 0.805 | 0.266 | 0.398 |
-| DVI | 0.515 | 0.804 | 0.269 | 0.557 |
-| **SpatialID** | **0.523** | **0.827** | **0.281** | 0.533 |
-
-SpatialID achieves **SOTA** in Image Quality, CLIP-I, and CLIP-T simultaneously.
+## Qualitative Results
 
 <p align="center">
-  <img src="paper/figure2.png" width="100%">
+  <img src="paper/figure2.png" width="95%">
 </p>
 
 ## Method
 
-SpatialID consists of two key components:
+<table>
+<tr>
+<td width="50%">
 
-**1. Spatial Mask Extractor** — Extracts a spatial relevance mask from cross-attention output using L2 norm, followed by Gaussian smoothing + soft-hard combination + morphological dilation. No external detection model needed.
+### Spatial Mask Extractor
 
-**2. Temporal-Spatial Scheduling** — Three-phase strategy adapted to the diffusion denoising dynamics:
-- **Early** (`t > 0.7`): Center Gaussian prior for stable composition
-- **Mid** (`0.3 < t ≤ 0.7`): Attention-derived mask for precise face anchoring
-- **Late** (`t ≤ 0.3`): Mask relaxation for natural light-shadow fusion
+Extracts a spatial relevance mask from cross-attention output via L2 norm, then refines with:
+- Gaussian smoothing (σ=1.5)
+- Soft-hard combination (β=0.7, τ=0.3)
+- 3×3 morphological dilation
 
-## Quick Start
+No external detection model needed — the model "self-perceives" where identity belongs.
+
+</td>
+<td width="50%">
+
+### Temporal-Spatial Scheduling
+
+Three-phase strategy adapted to diffusion dynamics:
+
+| Phase | Condition | Strategy |
+|-------|-----------|----------|
+| Early | `t > 0.7` | Center Gaussian prior |
+| Mid | `0.3 < t ≤ 0.7` | Attention-derived mask |
+| Late | `t ≤ 0.3` | Mask relaxation |
+
+</td>
+</tr>
+</table>
+
+## Getting Started
 
 ### Installation
 
@@ -77,7 +98,7 @@ scheduler = TemporalSpatialScheduler(
     center_sigma=0.3,
 )
 
-# 3. Use spatialid_denoise instead of the original denoise
+# 3. Run spatially-adaptive denoising
 x = spatialid_denoise(
     model, **inp, timesteps=timesteps,
     spatial_scheduler=scheduler,
@@ -91,46 +112,34 @@ x = spatialid_denoise(
 python app.py --device cuda:0 --port 7860
 ```
 
-### IBench Evaluation
-
-```bash
-python test_ibench_spatial.py
-```
-
-### Ablation Study
-
-```bash
-python ablation_study.py
-```
-
 ## Project Structure
 
 ```
 SpatialID/
 ├── spatialid/                    # Core package
-│   ├── __init__.py               # Public API
 │   ├── core.py                   # Spatial mask, temporal scheduling, denoise loop
 │   └── models/
 │       ├── flux/                 # FLUX DiT backbone
 │       ├── pulid/                # PuLID ID injection pipeline
 │       └── eva_clip/             # EVA-CLIP vision encoder
 ├── app.py                        # Gradio demo
-├── test_spatialid_quick.py       # Quick validation (5 IDs × 5 prompts)
-├── test_ibench_spatial.py        # Full IBench benchmark (100 IDs × 41 prompts)
-├── ablation_study.py             # Ablation experiments
-└── config_spatialid.py           # IBench evaluation config
+├── test_spatialid_quick.py       # Quick validation
+└── ablation_study.py             # Ablation experiments
 ```
 
 ## Model Weights
 
-- **FLUX**: Auto-downloaded from HuggingFace (`black-forest-labs/FLUX.1-dev`)
-- **PuLID**: Download from [PuLID repo](https://github.com/ToTheBeginning/PuLID) (`pulid_flux_v0.9.1.safetensors`)
+| Model | Source |
+|-------|--------|
+| FLUX.1-dev | Auto-download from [HuggingFace](https://huggingface.co/black-forest-labs/FLUX.1-dev) |
+| PuLID | Download from [PuLID repo](https://github.com/ToTheBeginning/PuLID) |
 
 ## Citation
 
 ```bibtex
 @article{li2025spatialid,
-  title={Inject Where It Matters: Training-Free Spatially-Adaptive Identity Preservation for Text-to-Image Personalization},
+  title={Inject Where It Matters: Training-Free Spatially-Adaptive Identity Preservation
+         for Text-to-Image Personalization},
   author={Li, Guandong and Ye, Mengxia},
   journal={arXiv preprint},
   year={2025}
@@ -139,4 +148,4 @@ SpatialID/
 
 ## Acknowledgements
 
-This project builds upon [PuLID](https://github.com/ToTheBeginning/PuLID), [FLUX](https://github.com/black-forest-labs/flux), and [EVA-CLIP](https://github.com/baaivision/EVA). We thank the authors for their excellent work.
+This project builds upon [PuLID](https://github.com/ToTheBeginning/PuLID), [FLUX](https://github.com/black-forest-labs/flux), and [EVA-CLIP](https://github.com/baaivision/EVA).
