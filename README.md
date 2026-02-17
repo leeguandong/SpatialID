@@ -3,7 +3,7 @@
 </h3>
 
 <p align="center">
-<a href="https://arxiv.org/abs/xxx"><img alt="Build" src="https://img.shields.io/badge/Tech%20Report-SpatialID-b31b1b.svg"></a>
+<a href="https://arxiv.org/abs/2602.13994"><img alt="Build" src="https://img.shields.io/badge/Tech%20Report-SpatialID-b31b1b.svg"></a>
 <a href="https://github.com/leeguandong/SpatialID"><img src="https://img.shields.io/static/v1?label=GitHub&message=repository&color=green"></a>
 </p>
 
